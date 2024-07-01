@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document access for Project work</title>
+    <title>Document Access Through Internet</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,9 +45,9 @@
         <br><br>
         <label for="documents">Select a document:</label>
         <select id="documents" name="documents" required>
-            <option value="Investigatory Poject Physics.pdf">Investigatory Project Physics</option>
-            <option value="3.jpg">Logo of Kendriya Vidyalaya Sangathan</option>
-            <option value="Investigatory Project PDF.pdf">Chemistry Investigatory Project</option>
+             <option value="3.jpg">Logo of Kendriya Vidyalaya Sangathan</option>             
+             <option value="Investigatory Project PDF.pdf">Chemistry Investigatory Project</option>
+             <option value="Investigatory Project Physics.pdf">Physics Investigatory Project</option>
         </select>
         <br><br>
         <button type="submit">View Document</button>
@@ -72,37 +72,53 @@
         document.getElementById('accessForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Get the current time
-            const now = new Date();
-            const accessTime = now.toLocaleString();
-
-            // Get the entered name
             const name = document.getElementById('name').value;
-
-            // Get the selected document
             const documentSelected = document.getElementById('documents').value;
 
-            // Create a new row in the log table
-            const newRow = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            nameCell.textContent = name;
-            const timeCell = document.createElement('td');
-            timeCell.textContent = accessTime;
-            const documentCell = document.createElement('td');
-            documentCell.textContent = documentSelected;
-
-            newRow.appendChild(nameCell);
-            newRow.appendChild(timeCell);
-            newRow.appendChild(documentCell);
-
-            document.getElementById('logTableBody').appendChild(newRow);
-
-            // Provide a link to open the document with the default application
-            const documentView = document.getElementById('documentView');
-            documentView.innerHTML = `<a href="${documentSelected}" download>Click here to open the document</a>`;
-            documentView.style.display = 'block';
+            fetch('/log-access', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name, document: documentSelected })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateLogTable();
+                    const documentView = document.getElementById('documentView');
+                    documentView.innerHTML = `<a href="${documentSelected}" target="_blank">Click here to open the document</a>`;
+                    documentView.style.display = 'block';
+                }
+            });
         });
+
+        function updateLogTable() {
+            fetch('/get-logs')
+            .then(response => response.json())
+            .then(data => {
+                const logTableBody = document.getElementById('logTableBody');
+                logTableBody.innerHTML = '';
+                data.forEach(log => {
+                    const newRow = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = log.name;
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = log.access_time;
+                    const documentCell = document.createElement('td');
+                    documentCell.textContent = log.document;
+
+                    newRow.appendChild(nameCell);
+                    newRow.appendChild(timeCell);
+                    newRow.appendChild(documentCell);
+
+                    logTableBody.appendChild(newRow);
+                });
+            });
+        }
+
+        // Initial call to populate the log table
+        updateLogTable();
     </script>
 </body>
 </html>
-
