@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document access for Project work</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .document-view {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+        }
+        .document-view a {
+            display: block;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Document Access</h1>
+    <form id="accessForm">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+        <label for="documents">Select a document:</label>
+        <select id="documents" name="documents" required>
+            <option value="Investigatory Poject Physics.pdf">Investigatory Project Physics</option>
+            <option value="3.jpg">Logo of Kendriya Vidyalaya Sangathan</option>
+            <option value="Importing & Exporting CSV File.pdf/">Importing & Exporting CSV File</option>
+            <option value="Investigatory Project PDF.pdf">Chemistry Investigatory Project</option>
+        </select>
+        <br><br>
+        <button type="submit">View Document</button>
+    </form>
+
+    <h2>Access Log</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Access Time</th>
+                <th>Document</th>
+            </tr>
+        </thead>
+        <tbody id="logTableBody">
+        </tbody>
+    </table>
+
+    <div id="documentView" class="document-view"></div>
+
+    <script>
+        document.getElementById('accessForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get the current time
+            const now = new Date();
+            const accessTime = now.toLocaleString();
+
+            // Get the entered name
+            const name = document.getElementById('name').value;
+
+            // Get the selected document
+            const documentSelected = document.getElementById('documents').value;
+
+            // Create a new row in the log table
+            const newRow = document.createElement('tr');
+            const nameCell = document.createElement('td');
+            nameCell.textContent = name;
+            const timeCell = document.createElement('td');
+            timeCell.textContent = accessTime;
+            const documentCell = document.createElement('td');
+            documentCell.textContent = documentSelected;
+
+            newRow.appendChild(nameCell);
+            newRow.appendChild(timeCell);
+            newRow.appendChild(documentCell);
+
+            document.getElementById('logTableBody').appendChild(newRow);
+
+            // Provide a link to open the document with the default application
+            const documentView = document.getElementById('documentView');
+            documentView.innerHTML = `<a href="${documentSelected}" download>Click here to open the document</a>`;
+            documentView.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
+
